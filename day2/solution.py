@@ -1,47 +1,45 @@
-import re
+from collections import defaultdict
 
 
-def task_1(rows):
-    s = 0
-    for row in rows:
-        q = re.findall(r'\d', row)
-        s += int(q[0] + q[-1])
-    return s
+class Dict(dict):
+    def __setitem__(self, key, value):
+        if self.get(key, 0) < value:
+            return super().__setitem__(key, value)
 
 
-def task_2(rows):
-    s = 0
-    translates = {
-        **{i: i for i in '123456789'},
-        'ne': '1',
-        'wo': '2',
-        'hree': '3',
-        'four': '4',
-        'five': '5',
-        'six': '6',
-        'seven': '7',
-        'ight': '8',
-        'ine': '9',
-    }
-    for row in rows:
-        q = re.findall(
-            r'\d|'
-            r'(?<=o)ne|'
-            r'(?<=t)wo|'
-            r'(?<=t)hree|'
-            r'four|'
-            r'five|'
-            r'six|'
-            r'seven|'
-            r'(?<=e)ight|'
-            r'(?<=n)ine',
-            row
-        )
-        s += int(translates[q[0]] + translates[q[-1]])
-    return s
+def get_max_counts_for_games(rows: list[str]):
+    max_counts_for_games = defaultdict(Dict)
+    for index_row, row in enumerate(rows):
+        row = row.rstrip()
+        row = row[row.index(':') + 2:]
+        sets = row.split('; ')
+        for every_set in sets:
+            for count_and_color in every_set.split(', '):
+                count, color = count_and_color.split()
+                max_counts_for_games[index_row + 1][color] = int(count)
+    return max_counts_for_games
 
 
-with open('day1/input.txt') as f:
+def task_1(rows: list[str]):
+    max_counts_for_games = get_max_counts_for_games(rows)
+    sum_correct = 0
+    for index, counts_colors in max_counts_for_games.items():
+        if counts_colors['red'] < 13 and counts_colors['green'] < 14 and \
+                counts_colors['blue'] < 15:
+            sum_correct += index
+    return sum_correct
+
+
+def task_2(rows: list[str]):
+    max_counts_for_games = get_max_counts_for_games(rows)
+    return sum(
+        counts_colors['red'] * counts_colors['green'] * counts_colors['blue']
+        for counts_colors in max_counts_for_games.values()
+    )
+
+
+a = Dict()
+with open('day2/input.txt') as f:
     lines = f.readlines()
     print(task_1(lines))
     print(task_2(lines))
