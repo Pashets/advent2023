@@ -38,8 +38,7 @@ def task_2(rows: list[str]):
     )
 
 
-a = Dict()
-with open('day2/input.txt') as f:
+with open('input.txt') as f:
     lines = f.readlines()
     print(task_1(lines))
     print(task_2(lines))
