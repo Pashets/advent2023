@@ -11,9 +11,6 @@ class Point:
         self.x = x
         self.y = y
 
-    def __repr__(self):
-        return f'({self.x},{self.y})'
-
 
 class Number:
     coord_start: Point
@@ -33,9 +30,6 @@ class Number:
                 self.coord_start.y - 1 <= symbol.coord.y <= self.coord_end.y + 1
         )
 
-    def __repr__(self):
-        return f'{self.number}:{self.coord_start}:{self.coord_end}'
-
 
 class SymbolTask1(NamedTuple):
     coord: Point
@@ -48,9 +42,6 @@ class SymbolTask2:
     def __init__(self, coord: Point):
         self.coord = coord
         self.connected_points = []
-
-    def __repr__(self):
-        return f'*:{self.coord},{len(self.connected_points)}'
 
 
 def get_numbers_and_symbols_task_1(text):
@@ -104,13 +95,11 @@ def task_1(rows):
 
 def task_2(rows):
     numbers, symbols = get_numbers_and_symbols_task_2(rows)
-    print(symbols)
     for number in numbers:
         for symbol in symbols:
             if not number.used and number.is_correct(symbol):
                 number.used = True
                 symbol.connected_points.append(number)
-    print(symbols)
     return sum(
         symbol.connected_points[0].number * symbol.connected_points[1].number
         for symbol in symbols
